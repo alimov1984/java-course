@@ -42,11 +42,6 @@ public class TestMethod implements Comparable<TestMethod> {
 
     @Override
     public int compareTo(TestMethod otherMethod) {
-        if (this.priority > otherMethod.priority)
-            return 1;
-        else if (this.priority < otherMethod.priority)
-            return -1;
-        else
-            return 0;
+        return this.priority - otherMethod.priority;
     }
 }

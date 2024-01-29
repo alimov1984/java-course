@@ -1,0 +1,5 @@
+.idea/,
+*.iml,
+target/,
+homework-1/*.iml,
+out/

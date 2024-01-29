@@ -16,7 +16,7 @@ import static ru.alimov.TestAnnotations.CsvSource;
 import static ru.alimov.TestAnnotations.BeforeTest;
 import static ru.alimov.TestAnnotations.AfterTest;
 public class TestRunner {
-    private static Map<String, Method> mainTestFunctions = new HashMap<>();
+    private static Map<Class, Method> mainTestFunctions = new HashMap<>();
     private static List<TestMethod> testMethodList = new ArrayList<>();
 
     public static void main(String[] args) {
@@ -40,19 +40,18 @@ public class TestRunner {
             return;
         }
         if (!Modifier.isStatic(method.getModifiers())) {
-            System.out.printf("ERROR @BeforeSuite annotation! %s is not static function", method.getName());
-            return;
+            throw new TestException(String.format("ERROR @BeforeSuite annotation! %s is not static function",
+                    method.getName()));
         }
         if (method.getParameterCount() > 0) {
-            System.out.printf("ERROR @BeforeSuite annotation! %s has parameters", method.getName());
-            return;
+            throw new TestException(String.format("ERROR @BeforeSuite annotation! %s has parameters",
+                    method.getName(), method.getName()));
         }
         if (mainTestFunctions.get(BeforeSuite.class.getSimpleName()) != null) {
-            System.out.println("ERROR @BeforeSuite annotation! Annotation is used more one time.");
-            return;
+            throw new TestException("ERROR @BeforeSuite annotation! Annotation is used more one time.");
         }
         method.setAccessible(true);
-        mainTestFunctions.put(BeforeSuite.class.getSimpleName(), method);
+        mainTestFunctions.put(BeforeSuite.class, method);
     }
 
 
@@ -61,19 +60,18 @@ public class TestRunner {
             return;
         }
         if (!Modifier.isStatic(method.getModifiers())) {
-            System.out.printf("ERROR @AfterSuite annotation!  %s is not static function.", method.getName());
-            return;
+            throw new TestException(String.format("ERROR @AfterSuite annotation!  %s is not static function.",
+                    method.getName()));
         }
         if (method.getParameterCount() > 0) {
-            System.out.printf("ERROR @AfterSuite annotation! %s has parameters", method.getName());
-            return;
+            throw new TestException(String.format("ERROR @AfterSuite annotation! %s has parameters",
+                    method.getName()));
         }
         if (mainTestFunctions.get(AfterSuite.class.getSimpleName()) != null) {
-            System.out.println("ERROR! AfterSuite annotation is used more one time.");
-            return;
+            throw new TestException("ERROR! AfterSuite annotation is used more one time.");
         }
         method.setAccessible(true);
-        mainTestFunctions.put(AfterSuite.class.getSimpleName(), method);
+        mainTestFunctions.put(AfterSuite.class, method);
 
     }
 
@@ -82,15 +80,14 @@ public class TestRunner {
             return;
         }
         if (method.getParameterCount() > 0) {
-            System.out.printf("ERROR @BeforeTest annotation! %s has parameters", method.getName());
-            return;
+            throw new TestException(String.format("ERROR @BeforeTest annotation! %s has parameters",
+                    method.getName()));
         }
         if (mainTestFunctions.get(BeforeTest.class.getSimpleName()) != null) {
-            System.out.println("ERROR @BeforeTest annotation! Annotation is used more one time.");
-            return;
+            throw new TestException(String.format("ERROR @BeforeTest annotation! Annotation is used more one time."));
         }
         method.setAccessible(true);
-        mainTestFunctions.put(BeforeTest.class.getSimpleName(), method);
+        mainTestFunctions.put(BeforeTest.class, method);
     }
 
 
@@ -99,15 +96,14 @@ public class TestRunner {
             return;
         }
         if (method.getParameterCount() > 0) {
-            System.out.printf("ERROR @AfterTest annotation! %s has parameters", method.getName());
-            return;
+            throw new TestException(String.format("ERROR @AfterTest annotation! %s has parameters",
+                    method.getName()));
         }
         if (mainTestFunctions.get(AfterTest.class.getSimpleName()) != null) {
-            System.out.println("ERROR AfterTest annotation! Annotation is used more one time.");
-            return;
+            throw new TestException("ERROR AfterTest annotation! Annotation is used more one time.");
         }
         method.setAccessible(true);
-        mainTestFunctions.put(AfterTest.class.getSimpleName(), method);
+        mainTestFunctions.put(AfterTest.class, method);
     }
 
     private static void prepareTestAnnotation(Method method) {
@@ -115,8 +111,8 @@ public class TestRunner {
             return;
         }
         if (Modifier.isStatic(method.getModifiers())) {
-            System.out.printf("ERROR @Test annotation! %s is  not static function.", method.getName());
-            return;
+            throw new TestException(String.format("ERROR @Test annotation! %s is  not static function.",
+                    method.getName()));
         }
         method.setAccessible(true);
         Test testAnnotation = method.getAnnotation(Test.class);
@@ -130,9 +126,10 @@ public class TestRunner {
             if (sourceAnnotation.source() != null && !sourceAnnotation.source().isEmpty()) {
                 String[] sourceInitArray = sourceAnnotation.source().split(",");
                 if (sourceInitArray.length != method.getParameterCount()) {
-                    System.out.printf("ERROR @CsvSource annotation! Count of parameters in %s differs from defined in annotation.",
-                            method.getName());
-                    return;
+                    if (Modifier.isStatic(method.getModifiers())) {
+                        throw new TestException(String.format("ERROR @CsvSource annotation! Count of parameters in %s differs from defined in annotation.",
+                                method.getName()));
+                    }
                 }
                 Object[] sourceResultArray = new Object[sourceInitArray.length];
                 Class[] paramClassArray = testMethod.getParameterTypes();
@@ -143,7 +140,7 @@ public class TestRunner {
                     } else if (paramClassArray[i].equals(Boolean.class) || paramClassArray[i].equals(boolean.class)) {
                         valueConverted = Boolean.valueOf(sourceInitArray[i].trim());
                     } else if (paramClassArray[i].equals(Integer.class) || paramClassArray[i].equals(int.class)) {
-                        valueConverted = Long.valueOf(sourceInitArray[i].trim());
+                        valueConverted = Integer.valueOf(sourceInitArray[i].trim());
                     } else if (paramClassArray[i].equals(Long.class) || paramClassArray[i].equals(long.class)) {
                         valueConverted = Long.valueOf(sourceInitArray[i].trim());
                     } else if (paramClassArray[i].equals(Float.class) || paramClassArray[i].equals(float.class)) {
@@ -153,9 +150,10 @@ public class TestRunner {
                     } else if (paramClassArray[i].equals(Byte.class) || paramClassArray[i].equals(byte.class)) {
                         valueConverted = Byte.valueOf(sourceInitArray[i].trim());
                     } else if (paramClassArray[i].equals(Short.class) || paramClassArray[i].equals(short.class)) {
-                        valueConverted = Byte.valueOf(sourceInitArray[i].trim());
+                        valueConverted = Short.valueOf(sourceInitArray[i].trim());
                     } else {
-                        continue;
+                        throw new TestException(String.format("ERROR @Test annotation! Not found handler for type %s in %s.",
+                                paramClassArray[i].getSimpleName(), method.getName()));
                     }
                     sourceResultArray[i] = valueConverted;
                 }
@@ -167,20 +165,19 @@ public class TestRunner {
 
     private static void executeTests(DealService dealService) {
         //Execute something before executing all functions with @Test annotation
-        Method beforeSuiteMethod = mainTestFunctions.get(BeforeSuite.class.getSimpleName());
+        Method beforeSuiteMethod = mainTestFunctions.get(BeforeSuite.class);
         if (beforeSuiteMethod != null) {
             try {
                 beforeSuiteMethod.invoke(null);
             } catch (Exception ex) {
-                System.out.printf("ERROR @BeforeSuite annotation! While executing %s", beforeSuiteMethod.getName());
-                return;
+                throw new TestException(String.format("ERROR @BeforeSuite annotation! While executing %s", beforeSuiteMethod.getName()), ex);
             }
         }
 
         List<TestMethod> methodForExecute = testMethodList.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
         for (TestMethod testMethod : methodForExecute) {
             //Execute something before executing function with @Test annotation
-            Method beforeMethod = mainTestFunctions.get(BeforeTest.class.getSimpleName());
+            Method beforeMethod = mainTestFunctions.get(BeforeTest.class);
             try {
                 if (beforeMethod != null) {
                     if (Modifier.isStatic(beforeMethod.getModifiers())) {
@@ -190,19 +187,19 @@ public class TestRunner {
                     }
                 }
             } catch (Exception ex) {
-                System.out.printf("ERROR @BeforeTest annotation! While executing %s", beforeMethod.getName());
-                return;
+                throw new TestException(String.format("ERROR @BeforeTest annotation! While executing %s",
+                        beforeMethod.getName()), ex);
             }
 
             try {
                 //Execute function with @Test annotation
                 testMethod.getMethod().invoke(dealService, testMethod.getSource());
             } catch (Exception ex) {
-                System.out.printf("ERROR @Test annotation! While executing %s", testMethod.getMethod().getName());
-                return;
+                throw new TestException(String.format("ERROR @Test annotation! While executing %s",
+                        testMethod.getMethod().getName()), ex);
             }
             //Execute something after executing function with @Test annotation
-            Method afterMethod = mainTestFunctions.get(AfterTest.class.getSimpleName());
+            Method afterMethod = mainTestFunctions.get(AfterTest.class);
             try {
                 if (afterMethod != null) {
                     if (Modifier.isStatic(afterMethod.getModifiers())) {
@@ -212,17 +209,18 @@ public class TestRunner {
                     }
                 }
             } catch (Exception ex) {
-                System.out.printf("ERROR @AfterTest annotation! While executing %s", afterMethod.getName());
-                return;
+                throw new TestException(String.format("ERROR @AfterTest annotation! While executing %s",
+                        afterMethod.getName()), ex);
             }
         }
         //Execute something after executing all functions with @Test annotation
-        Method afterSuiteMethod = mainTestFunctions.get(AfterSuite.class.getSimpleName());
+        Method afterSuiteMethod = mainTestFunctions.get(AfterSuite.class);
         if (afterSuiteMethod != null) {
             try {
                 afterSuiteMethod.invoke(null);
             } catch (Exception ex) {
-                System.out.printf("ERROR AfterSuite annotation! While executing %s", afterSuiteMethod.getName());
+                throw new TestException(String.format("ERROR AfterSuite annotation! While executing %s",
+                        afterSuiteMethod.getName()), ex);
             }
         }
     }
