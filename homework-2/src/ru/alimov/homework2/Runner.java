@@ -52,7 +52,7 @@ public class Runner {
 
     }
 
-    private static List<Object> removeDublicateInList(List<Object> inputList) {
+    private static <T> List<T> removeDublicateInList(List<T> inputList) {
         return inputList.stream().distinct().collect(Collectors.toList());
     }
 
