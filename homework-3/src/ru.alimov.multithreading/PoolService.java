@@ -29,8 +29,8 @@ public final class PoolService {
             throw new IllegalArgumentException("Capacity value must be one at least");
         }
         PoolService poolService = new PoolService(capacity);
+        ProcessTask processTask = poolService.new ProcessTask();
         for (int i = 0; i < capacity; ++i) {
-            ProcessTask processTask = poolService.new ProcessTask();
             Thread thread = new Thread(processTask);
             thread.start();
             poolService.threadList.add(thread);
