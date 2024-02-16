@@ -4,28 +4,24 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 
 public final class PoolService {
     private final List<Runnable> runnableTaskList;
-    private final List<AThread> threadList;
+    private final List<Thread> threadList;
+    private final List<Runnable> observerList;
     private final int capacity;
     private boolean isShutdown;
-    private final Object syncGetTask = new Object();
-    private final Object syncAddTask = new Object();
-
-    public int getCapacity() {
-        return this.capacity;
-    }
-
-    public boolean isShutdown() {
-        return this.isShutdown;
-    }
+    private final Object syncTaskList = new Object();
+    private final CountDownLatch activeThreadsCount;
 
     private PoolService(int capacity) {
         this.capacity = capacity;
         this.runnableTaskList = new LinkedList<>();
         this.threadList = new ArrayList<>(this.capacity);
+        this.observerList = new ArrayList<>(this.capacity);
+        this.activeThreadsCount = new CountDownLatch(this.capacity);
     }
 
     public static PoolService createPool(int capacity) {
@@ -34,74 +30,109 @@ public final class PoolService {
         }
         PoolService poolService = new PoolService(capacity);
         for (int i = 0; i < capacity; ++i) {
-            AThread aThread = poolService.new AThread();
-            poolService.threadList.add(aThread);
-            aThread.start();
+            ProcessTask processTask = poolService.new ProcessTask();
+            Thread thread = new Thread(processTask);
+            thread.start();
+            poolService.threadList.add(thread);
+
+            Thread observerThread = new Thread(() -> {
+                try {
+                    thread.join();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                poolService.activeThreadsCount.countDown();
+            });
+            observerThread.start();
+            poolService.observerList.add(observerThread);
         }
         return poolService;
     }
 
     public void execute(Runnable task) {
-        synchronized (syncAddTask) {
+        synchronized (syncTaskList) {
             if (this.isShutdown) {
                 throw new IllegalStateException();
             }
             runnableTaskList.add(task);
+            syncTaskList.notifyAll();
         }
     }
 
     public void shutdown() {
-        synchronized (syncAddTask) {
+        System.out.printf("shutdown() started %s\n", Instant.now());
+        synchronized (syncTaskList) {
             for (int i = 0; i < this.capacity; ++i) {
                 runnableTaskList.add(new FinishTask());
             }
             this.isShutdown = true;
+            syncTaskList.notifyAll();
         }
-    }
-
-    private Runnable getRunnableTask() {
-        Runnable currentTask = null;
-        synchronized (syncGetTask) {
-            if (this.runnableTaskList != null && !this.runnableTaskList.isEmpty()) {
-                currentTask = this.runnableTaskList.get(0);
-                this.runnableTaskList.remove(0);
-            }
-        }
-        return currentTask;
     }
 
     public void awaitTermination() {
         System.out.printf("awaitTermination() started %s\n", Instant.now());
-        while (!Thread.currentThread().isInterrupted()) {
-            if (runnableTaskList.isEmpty()
-                    && threadList.stream().filter(t -> t.isAlive()).count() == 0) {
-                System.out.printf("awaitTermination() executed %s\n", Instant.now());
-                break;
-            }
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
+        Thread awaitTerminationTread = new Thread(
+                () -> {
+                    try {
+                        activeThreadsCount.await();
+                    } catch (InterruptedException e) {
+                        System.out.printf("awaitTermination() InterruptedException %s\n", Instant.now());
+                        throw new RuntimeException(e);
+                    }
+                    synchronized (syncTaskList) {
+                        if (runnableTaskList.isEmpty()
+                                && threadList.stream().filter(t -> t.isAlive()).count() == 0) {
+                            System.out.printf("awaitTermination() all threads are finished %s\n", Instant.now());
+                        }
+                    }
+                });
+        awaitTerminationTread.start();
     }
 
-    private class AThread extends Thread {
+    private class ProcessTask implements Runnable {
         @Override
         public void run() {
-            System.out.printf("%s - start\n", this.getName());
-            while (!this.isInterrupted()) {
-                Runnable currentTask = getRunnableTask();
-                if (currentTask == null) {
-                    continue;
+            System.out.printf("%s - start\n", Thread.currentThread().getName());
+            while (!Thread.currentThread().isInterrupted()) {
+                Runnable currentTask = null;
+                synchronized (syncTaskList) {
+                    currentTask = getRunnableTask();
+                    if (currentTask == null) {
+                        System.out.printf("%s - waiting %s \n", Thread.currentThread().getName(), Instant.now());
+                        try {
+                            syncTaskList.wait();
+                        } catch (InterruptedException e) {
+                            System.out.printf("%s InterruptedException %s\n", Thread.currentThread().getName(), Instant.now());
+                            Thread.currentThread().interrupt();
+                        }
+                        System.out.printf("%s - waking up %s\n", Thread.currentThread().getName(), Instant.now());
+                        continue;
+                    }
                 }
                 if (currentTask instanceof FinishTask) {
-                    System.out.printf("%s - FinishTask is received\n", this.getName());
+                    System.out.printf("%s - FinishTask is received %s\n", Thread.currentThread().getName(), Instant.now());
                     break;
                 }
                 currentTask.run();
             }
-            System.out.printf("%s - end\n", this.getName());
+            System.out.printf("%s - end %s\n", Thread.currentThread().getName(), Instant.now());
         }
+
+        private Runnable getRunnableTask() {
+            Runnable currentTask = null;
+            if (runnableTaskList != null && !runnableTaskList.isEmpty()) {
+                currentTask = runnableTaskList.remove(0);
+            }
+            return currentTask;
+        }
+    }
+
+    public int getCapacity() {
+        return this.capacity;
+    }
+
+    public boolean isShutdown() {
+        return this.isShutdown;
     }
 }
