@@ -11,13 +11,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Repository
-public class UserDao {
+public class UserDaoImpl implements UserDao {
     private final DataSource dataSource;
 
-    public UserDao(DataSource dataSource) {
+    public UserDaoImpl(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
+    @Override
     public void insert(User user) throws SQLException {
         try (Connection con = dataSource.getConnection();
              PreparedStatement pst = con.prepareStatement("INSERT INTO Users (username) VALUES (?)")) {
@@ -26,6 +27,7 @@ public class UserDao {
         }
     }
 
+    @Override
     public void update(User user) throws SQLException {
         try (Connection con = dataSource.getConnection();
              PreparedStatement pst = con.prepareStatement("UPDATE Users SET username=? WHERE id=?")) {
@@ -35,6 +37,7 @@ public class UserDao {
         }
     }
 
+    @Override
     public void delete(long id) throws SQLException {
         try (Connection con = dataSource.getConnection();
              PreparedStatement pst = con.prepareStatement("DELETE FROM Users WHERE id=?")) {
@@ -43,6 +46,7 @@ public class UserDao {
         }
     }
 
+    @Override
     public void deleteAll() throws SQLException {
         try (Connection con = dataSource.getConnection();
              Statement st = con.createStatement()) {
@@ -50,6 +54,7 @@ public class UserDao {
         }
     }
 
+    @Override
     public List<User> getAll() throws SQLException {
         List<User> userList = new LinkedList<>();
         try (Connection con = dataSource.getConnection();
@@ -65,12 +70,34 @@ public class UserDao {
         return userList;
     }
 
+    @Override
     public User getById(long userId) throws SQLException {
         User user = null;
         ResultSet rs = null;
         try (Connection con = dataSource.getConnection();
              PreparedStatement pst = con.prepareStatement("SELECT id, username FROM users WHERE id=?");) {
             pst.setLong(1, userId);
+            rs = pst.executeQuery();
+            if (rs.next()) {
+                user = new User();
+                user.setId(rs.getLong(1));
+                user.setUserName(rs.getString(2));
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+        }
+        return user;
+    }
+
+    @Override
+    public User getByUserName(String userName) throws SQLException {
+        User user = null;
+        ResultSet rs = null;
+        try (Connection con = dataSource.getConnection();
+             PreparedStatement pst = con.prepareStatement("SELECT id, username FROM users WHERE username=?");) {
+            pst.setString(1, userName);
             rs = pst.executeQuery();
             if (rs.next()) {
                 user = new User();

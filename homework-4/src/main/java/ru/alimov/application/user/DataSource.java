@@ -2,28 +2,34 @@ package ru.alimov.application.user;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import javax.annotation.PostConstruct;
 
 @Component
+@DependsOn("dataSourceConfig")
 public class DataSource {
-    private static HikariConfig dsConfig;
-    private static HikariDataSource ds;
+    private DataSourceConfig dataSourceConfig;
+    private HikariConfig dsConfig;
+    private HikariDataSource ds;
 
-    static {
-        dsConfig = new HikariConfig();
-        dsConfig.setJdbcUrl("jdbc:postgresql://localhost:5432/db_user_store");
-        dsConfig.setUsername("test_user");
-        dsConfig.setPassword("test_pas");
+    public DataSource(DataSourceConfig dataSourceConfig) {
+        this.dataSourceConfig = dataSourceConfig;
+        this.dsConfig = new HikariConfig();
+    }
+
+    @PostConstruct
+    public void initPoolConfiguration() {
+        dsConfig.setJdbcUrl(dataSourceConfig.getDb_url());
+        dsConfig.setUsername(dataSourceConfig.getDb_username());
+        dsConfig.setPassword(dataSourceConfig.getDb_password());
         ds = new HikariDataSource(dsConfig);
     }
 
-    private DataSource() {
-    }
-
-    public static Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         return ds.getConnection();
     }
 
