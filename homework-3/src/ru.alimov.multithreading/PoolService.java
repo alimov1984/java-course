@@ -9,7 +9,6 @@ import java.util.List;
 public final class PoolService {
     private final List<Runnable> runnableTaskList;
     private final List<Thread> threadList;
-    private final List<Runnable> observerList;
     private final int capacity;
     private boolean isShutdown;
     private final Object syncTaskList = new Object();
@@ -18,7 +17,6 @@ public final class PoolService {
         this.capacity = capacity;
         this.runnableTaskList = new LinkedList<>();
         this.threadList = new ArrayList<>(this.capacity);
-        this.observerList = new ArrayList<>(this.capacity);
     }
 
     public static PoolService createPool(int capacity) {
