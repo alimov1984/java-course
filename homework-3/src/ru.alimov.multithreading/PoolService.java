@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 
 public final class PoolService {
@@ -14,14 +13,12 @@ public final class PoolService {
     private final int capacity;
     private boolean isShutdown;
     private final Object syncTaskList = new Object();
-    private final CountDownLatch activeThreadsCount;
 
     private PoolService(int capacity) {
         this.capacity = capacity;
         this.runnableTaskList = new LinkedList<>();
         this.threadList = new ArrayList<>(this.capacity);
         this.observerList = new ArrayList<>(this.capacity);
-        this.activeThreadsCount = new CountDownLatch(this.capacity);
     }
 
     public static PoolService createPool(int capacity) {
@@ -34,17 +31,6 @@ public final class PoolService {
             Thread thread = new Thread(processTask);
             thread.start();
             poolService.threadList.add(thread);
-
-            Thread observerThread = new Thread(() -> {
-                try {
-                    thread.join();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                poolService.activeThreadsCount.countDown();
-            });
-            observerThread.start();
-            poolService.observerList.add(observerThread);
         }
         return poolService;
     }
@@ -75,7 +61,9 @@ public final class PoolService {
         Thread awaitTerminationTread = new Thread(
                 () -> {
                     try {
-                        activeThreadsCount.await();
+                        for (Thread thread : this.threadList) {
+                            thread.join();
+                        }
                     } catch (InterruptedException e) {
                         System.out.printf("awaitTermination() InterruptedException %s\n", Instant.now());
                         throw new RuntimeException(e);
