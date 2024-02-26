@@ -10,24 +10,24 @@ import org.springframework.context.annotation.PropertySource;
 public class DataSourceConfig {
 
     @Value("${data-source.db-url}")
-    private String db_url;
+    private String dbUrl;
 
     @Value("${data-source.db-username}")
-    private String db_username;
+    private String dbUsername;
 
     @Value("${data-source.db-password}")
-    private String db_password;
+    private String dbPassword;
 
-    public String getDb_url() {
-        return db_url;
+    public String getDbUrl() {
+        return dbUrl;
     }
 
-    public String getDb_username() {
-        return db_username;
+    public String getDbUsername() {
+        return dbUsername;
     }
 
-    public String getDb_password() {
-        return db_password;
+    public String getDbPassword() {
+        return dbPassword;
     }
 
 }

@@ -23,9 +23,9 @@ public class DataSource {
 
     @PostConstruct
     public void initPoolConfiguration() {
-        dsConfig.setJdbcUrl(dataSourceConfig.getDb_url());
-        dsConfig.setUsername(dataSourceConfig.getDb_username());
-        dsConfig.setPassword(dataSourceConfig.getDb_password());
+        dsConfig.setJdbcUrl(dataSourceConfig.getDbUrl());
+        dsConfig.setUsername(dataSourceConfig.getDbUsername());
+        dsConfig.setPassword(dataSourceConfig.getDbPassword());
         ds = new HikariDataSource(dsConfig);
     }
 
