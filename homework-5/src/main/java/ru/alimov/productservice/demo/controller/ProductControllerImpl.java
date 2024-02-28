@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/api/v1/product-service")
+@RequestMapping("/api/v1/products")
 public class ProductControllerImpl implements ProductController {
 
     private final ProductService productService;

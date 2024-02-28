@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>ru.alimov.product-service</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>homework-5</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>demo</name>
 	<description>Product service</description>

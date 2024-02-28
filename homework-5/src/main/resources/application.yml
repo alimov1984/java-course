@@ -1,0 +1,4 @@
+data-source:
+  db-url: jdbc:postgresql://localhost:5432/db_product_store
+  db-username: test_user
+  db-password: test_pas
