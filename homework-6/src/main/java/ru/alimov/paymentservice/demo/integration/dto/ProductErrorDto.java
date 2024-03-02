@@ -1,6 +1,6 @@
 package ru.alimov.paymentservice.demo.integration.dto;
 
-public class ErrorDto {
+public class ProductErrorDto {
     private String code;
     private String message;
 

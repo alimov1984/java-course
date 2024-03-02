@@ -1,14 +1,14 @@
 package ru.alimov.paymentservice.demo.exception;
 
-public class PaymentProductNotFoundException extends RuntimeException {
-    public PaymentProductNotFoundException() {
+public class ProductNotFoundException extends RuntimeException {
+    public ProductNotFoundException() {
     }
 
-    public PaymentProductNotFoundException(String message) {
+    public ProductNotFoundException(String message) {
         super(message);
     }
 
-    public PaymentProductNotFoundException(String message, Throwable cause) {
+    public ProductNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
 }

@@ -1,9 +1,9 @@
-package ru.alimov.paymentservice.demo.dto;
+package ru.alimov.paymentservice.demo.integration.dto;
 
 
 import java.math.BigDecimal;
 
-public class ProductPaymentDto {
+public class ProductDto {
     private Long id;
     private String accountNumber;
     private BigDecimal balance;

@@ -84,7 +84,9 @@ public class ProductControllerImpl implements ProductController {
         }
 
         ProductDto productDto = productService.getProductById(productId);
-
+        if (productDto == null) {
+            return prepareErrorResponse(PRODUCT_NOT_FOUND, String.format("Product not found"));
+        }
         return new ResponseEntity<>(productDto, HttpStatus.OK);
     }
 

@@ -1,14 +1,14 @@
 package ru.alimov.paymentservice.demo.exception;
 
-public class PaymentValidationException extends RuntimeException {
-    public PaymentValidationException() {
+public class UserNotFoundException extends RuntimeException {
+    public UserNotFoundException() {
     }
 
-    public PaymentValidationException(String message) {
+    public UserNotFoundException(String message) {
         super(message);
     }
 
-    public PaymentValidationException(String message, Throwable cause) {
+    public UserNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
 }

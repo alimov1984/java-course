@@ -1,15 +1,15 @@
 package ru.alimov.paymentservice.demo.exception;
 
-public class ProductServiceUnavailableException extends RuntimeException {
+public class ProductUnavailableException extends RuntimeException {
 
-    public ProductServiceUnavailableException() {
+    public ProductUnavailableException() {
     }
 
-    public ProductServiceUnavailableException(String message) {
+    public ProductUnavailableException(String message) {
         super(message);
     }
 
-    public ProductServiceUnavailableException(String message, Throwable cause) {
+    public ProductUnavailableException(String message, Throwable cause) {
         super(message, cause);
     }
 }

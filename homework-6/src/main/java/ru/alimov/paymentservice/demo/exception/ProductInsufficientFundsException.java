@@ -1,14 +1,14 @@
 package ru.alimov.paymentservice.demo.exception;
 
-public class PaymentInsufficientFundsException extends RuntimeException {
-    public PaymentInsufficientFundsException() {
+public class ProductInsufficientFundsException extends RuntimeException {
+    public ProductInsufficientFundsException() {
     }
 
-    public PaymentInsufficientFundsException(String message) {
+    public ProductInsufficientFundsException(String message) {
         super(message);
     }
 
-    public PaymentInsufficientFundsException(String message, Throwable cause) {
+    public ProductInsufficientFundsException(String message, Throwable cause) {
         super(message, cause);
     }
 }

@@ -1,14 +1,14 @@
 package ru.alimov.paymentservice.demo.exception;
 
-public class PaymentServiceValidationException extends RuntimeException {
-    public PaymentServiceValidationException() {
+public class PaymentValidationException extends RuntimeException {
+    public PaymentValidationException() {
     }
 
-    public PaymentServiceValidationException(String message) {
+    public PaymentValidationException(String message) {
         super(message);
     }
 
-    public PaymentServiceValidationException(String message, Throwable cause) {
+    public PaymentValidationException(String message, Throwable cause) {
         super(message, cause);
     }
 }

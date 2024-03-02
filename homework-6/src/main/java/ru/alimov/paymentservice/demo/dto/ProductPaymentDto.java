@@ -3,7 +3,7 @@ package ru.alimov.paymentservice.demo.dto;
 
 import java.math.BigDecimal;
 
-public class ProductDto {
+public class ProductPaymentDto {
     private Long id;
     private String accountNumber;
     private BigDecimal balance;

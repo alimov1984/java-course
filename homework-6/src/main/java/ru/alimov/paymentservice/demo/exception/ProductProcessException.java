@@ -1,14 +1,14 @@
 package ru.alimov.paymentservice.demo.exception;
 
-public class ProductServiceProcessException extends RuntimeException {
-    public ProductServiceProcessException() {
+public class ProductProcessException extends RuntimeException {
+    public ProductProcessException() {
     }
 
-    public ProductServiceProcessException(String message) {
+    public ProductProcessException(String message) {
         super(message);
     }
 
-    public ProductServiceProcessException(String message, Throwable cause) {
+    public ProductProcessException(String message, Throwable cause) {
         super(message, cause);
     }
 }
