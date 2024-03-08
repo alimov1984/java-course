@@ -92,7 +92,7 @@ public class ProductServiceImpl implements ProductService {
             return productDtoList;
         }
         try {
-            List<Product> productList = productRepository.getByUserId(userId);
+            List<Product> productList = productRepository.findByUserId(userId);
             productDtoList = productList.stream().map(p -> mapProductToDto(p)).collect(Collectors.toList());
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);

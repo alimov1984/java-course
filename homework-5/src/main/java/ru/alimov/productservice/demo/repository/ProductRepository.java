@@ -7,5 +7,5 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    List<Product> getByUserId(Long userId);
+    List<Product> findByUserId(Long userId);
 }
