@@ -30,7 +30,7 @@ public class ProductServiceImpl implements ProductService {
         try {
             Product product = mapDtoToProduct(productDto);
             product.setUserId(userId);
-            productRepository.insert(product);
+            productRepository.save(product);
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }
@@ -44,7 +44,7 @@ public class ProductServiceImpl implements ProductService {
         try {
             Product product = mapDtoToProduct(productDto);
             product.setUserId(userId);
-            productRepository.update(product);
+            productRepository.save(product);
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }
@@ -56,7 +56,7 @@ public class ProductServiceImpl implements ProductService {
             return;
         }
         try {
-            productRepository.delete(productId);
+            productRepository.deleteById(productId);
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }
@@ -78,7 +78,7 @@ public class ProductServiceImpl implements ProductService {
             return null;
         }
         try {
-            productDto = mapProductToDto(productRepository.getById(id));
+            productDto = mapProductToDto(productRepository.findById(id).orElse(null));
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }

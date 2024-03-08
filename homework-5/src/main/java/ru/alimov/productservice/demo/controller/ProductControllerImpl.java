@@ -27,7 +27,7 @@ public class ProductControllerImpl implements ProductController {
     public ProductControllerImpl(ProductService productService) {
         this.productService = productService;
     }
-
+/*
     @PostConstruct
     public void initDb() {
         productService.deleteAllProducts();
@@ -75,7 +75,7 @@ public class ProductControllerImpl implements ProductController {
         }
 
     }
-
+*/
     @GetMapping("/by-product-id/{id}")
     @Override
     public ResponseEntity<?> getProductById(@PathVariable(name = "id") Long productId) {
