@@ -28,54 +28,6 @@ public class ProductControllerImpl implements ProductController {
         this.productService = productService;
     }
 
-    @PostConstruct
-    public void initDb() {
-        productService.deleteAllProducts();
-
-        List<ProductDto> productDtoList = new ArrayList<>();
-
-        ProductDto productDto1 = new ProductDto();
-        productDto1.setAccountNumber("12345");
-        productDto1.setBalance(new BigDecimal(525000.2040));
-        productDto1.setType(ProductType.ACCOUNT);
-        productDtoList.add(productDto1);
-
-        ProductDto productDto2 = new ProductDto();
-        productDto2.setAccountNumber("5680954");
-        productDto2.setBalance(new BigDecimal(25000.430));
-        productDto2.setType(ProductType.ACCOUNT);
-        productDtoList.add(productDto2);
-
-        ProductDto productDto3 = new ProductDto();
-        productDto3.setAccountNumber("8766432");
-        productDto3.setBalance(new BigDecimal(1895));
-        productDto3.setType(ProductType.CARD);
-        productDtoList.add(productDto3);
-
-        for (ProductDto productDto : productDtoList) {
-            productService.addProduct(25L, productDto);
-        }
-
-        List<ProductDto> productDtoList2 = new ArrayList<>();
-
-        ProductDto productDto4 = new ProductDto();
-        productDto4.setAccountNumber("32437");
-        productDto4.setBalance(new BigDecimal(12667.6542));
-        productDto4.setType(ProductType.ACCOUNT);
-        productDtoList2.add(productDto4);
-
-        ProductDto productDto5 = new ProductDto();
-        productDto5.setAccountNumber("83554");
-        productDto5.setBalance(new BigDecimal(22344.5644));
-        productDto5.setType(ProductType.CARD);
-        productDtoList2.add(productDto5);
-
-        for (ProductDto productDto : productDtoList2) {
-            productService.addProduct(50L, productDto);
-        }
-
-    }
-
     @GetMapping("/by-product-id/{id}")
     @Override
     public ResponseEntity<?> getProductById(@PathVariable(name = "id") Long productId) {
@@ -84,7 +36,9 @@ public class ProductControllerImpl implements ProductController {
         }
 
         ProductDto productDto = productService.getProductById(productId);
-
+        if (productDto == null) {
+            return prepareErrorResponse(PRODUCT_NOT_FOUND, String.format("Product not found"));
+        }
         return new ResponseEntity<>(productDto, HttpStatus.OK);
     }
 
