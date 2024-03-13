@@ -2,5 +2,5 @@ server:
   port: 8081
 
 integration:
-  product-service:
+  product-service-properties:
     url: http://localhost:8080/api/v1/products
