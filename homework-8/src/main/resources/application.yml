@@ -1,0 +1,12 @@
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/db_limit_store
+    username: test_user
+    password: test_pas
+  flyway:
+    url: jdbc:postgresql://localhost:5432/db_limit_store
+    locations: classpath:db/migration
+  logging:
+    level:
+      io.r2dbc.postgresql.QUERY: DEBUG # for queries
+      io.r2dbc.postgresql.PARAM: DEBUG # for parameters
