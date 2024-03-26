@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS public.users
 (
     id bigint NOT NULL,
     is_locked boolean NOT NULL,
+    max_daily_limit numeric NOT NULL,
     CONSTRAINT users_pkey PRIMARY KEY (id)
 );
 

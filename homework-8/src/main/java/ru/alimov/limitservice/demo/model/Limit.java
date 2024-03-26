@@ -4,16 +4,16 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Table(name = "limits")
 public class Limit {
     @Id
     private Long id;
-    private Timestamp rowDate;
+    private OffsetDateTime rowDate;
     private UUID transactionId;
-    private Timestamp transactionDate;
+    private OffsetDateTime transactionDate;
     private Long userId;
     private BigDecimal sum;
 
@@ -21,7 +21,7 @@ public class Limit {
         this.id = id;
     }
 
-    public void setRowDate(Timestamp rowDate) {
+    public void setRowDate(OffsetDateTime rowDate) {
         this.rowDate = rowDate;
     }
 
@@ -29,7 +29,7 @@ public class Limit {
         this.transactionId = transactionId;
     }
 
-    public void setTransactionDate(Timestamp transactionDate) {
+    public void setTransactionDate(OffsetDateTime transactionDate) {
         this.transactionDate = transactionDate;
     }
 
@@ -45,7 +45,7 @@ public class Limit {
         return id;
     }
 
-    public Timestamp getRowDate() {
+    public OffsetDateTime getRowDate() {
         return rowDate;
     }
 
@@ -53,7 +53,7 @@ public class Limit {
         return transactionId;
     }
 
-    public Timestamp getTransactionDate() {
+    public OffsetDateTime getTransactionDate() {
         return transactionDate;
     }
 

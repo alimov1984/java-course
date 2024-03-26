@@ -6,7 +6,10 @@ spring:
   flyway:
     url: jdbc:postgresql://localhost:5432/db_limit_store
     locations: classpath:db/migration
-  logging:
-    level:
-      io.r2dbc.postgresql.QUERY: DEBUG # for queries
-      io.r2dbc.postgresql.PARAM: DEBUG # for parameters
+logging:
+  level:
+    root: DEBUG
+    io.r2dbc.postgresql.QUERY: DEBUG # for queries
+    io.r2dbc.postgresql.PARAM: DEBUG # for parameters
+settings:
+  defaultMaxDailyUserLimit: 10000
