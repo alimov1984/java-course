@@ -10,11 +10,12 @@ public class SettingsProperties {
     private final BigDecimal defaultMaxDailyUserLimit;
 
     @ConstructorBinding
-    public SettingsProperties(BigDecimal defaultMaxDailyUserLimit) {
+    public SettingsProperties(BigDecimal defaultMaxDailyUserLimit, String dailyScheduleCron) {
         this.defaultMaxDailyUserLimit = defaultMaxDailyUserLimit;
     }
 
     public BigDecimal getDefaultMaxDailyUserLimit() {
         return defaultMaxDailyUserLimit;
     }
+
 }

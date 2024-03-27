@@ -184,7 +184,7 @@ public class LimitServiceImpl implements LimitService {
         }
     }
 
-    @Scheduled(cron = "0 1 0 * * *")
+    @Scheduled(cron = "${settings.dailyScheduleCron}")
     @Transactional
     @Override
     public Flux<Limit> setDailyLimitToUsers() {

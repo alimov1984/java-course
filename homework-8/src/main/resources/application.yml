@@ -13,3 +13,5 @@ logging:
     io.r2dbc.postgresql.PARAM: DEBUG # for parameters
 settings:
   defaultMaxDailyUserLimit: 10000
+  dailyScheduleCron: "0 0 0 * * *"
+
