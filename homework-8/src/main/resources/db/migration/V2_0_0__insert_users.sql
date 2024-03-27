@@ -1,0 +1,10 @@
+INSERT INTO public.users(id, is_locked, max_daily_limit) VALUES (1, false, 10000);
+INSERT INTO public.users(id, is_locked, max_daily_limit) VALUES (2, false, 10000);
+INSERT INTO public.users(id, is_locked, max_daily_limit) VALUES (3, false, 10000);
+INSERT INTO public.users(id, is_locked, max_daily_limit) VALUES (4, false, 10000);
+INSERT INTO public.users(id, is_locked, max_daily_limit) VALUES (5, false, 10000);
+INSERT INTO public.users(id, is_locked, max_daily_limit) VALUES (6, false, 10000);
+INSERT INTO public.users(id, is_locked, max_daily_limit) VALUES (7, false, 10000);
+INSERT INTO public.users(id, is_locked, max_daily_limit) VALUES (8, false, 10000);
+INSERT INTO public.users(id, is_locked, max_daily_limit) VALUES (9, false, 10000);
+INSERT INTO public.users(id, is_locked, max_daily_limit) VALUES (10, false, 10000);
