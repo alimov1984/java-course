@@ -4,7 +4,6 @@ import io.r2dbc.spi.ConnectionFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 import ru.alimov.limitservice.demo.config.SettingsProperties;
@@ -183,15 +182,11 @@ public class LimitServiceImpl implements LimitService {
             throw new LimitValidationException(EMPTY_FIELD_ERROR, "Field 'transactionId' has not be empty");
         }
     }
-
+    @Override
     @Scheduled(cron = "${settings.dailyScheduleCron}")
     @Transactional
-    @Override
-    public Flux<Limit> setDailyLimitToUsers() {
-        return userService.findAllUsers().flatMap(user -> addLimit(user.getId(),
-                UUID.randomUUID(),
-                OffsetDateTime.now(),
-                user.getMaxDailyLimit()));
+    public Mono<Long> setDailyLimitToUsers() {
+        return limitRepository.insertDailyLimit(settingsProperties.getDefaultMaxDailyUserLimit());
     }
 
 }

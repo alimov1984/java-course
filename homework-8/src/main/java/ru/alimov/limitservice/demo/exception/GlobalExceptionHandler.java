@@ -10,7 +10,7 @@ import ru.alimov.limitservice.demo.dto.LimitErrorDto;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(LimitServiceException.class)
     public ResponseEntity<LimitErrorDto> handlerLimitServiceException(LimitServiceException ex) {
